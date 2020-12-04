@@ -1,0 +1,399 @@
+import Data.List
+import System.IO
+import Data.Either
+
+--Exercicio 1
+
+enumFromTo' :: Int -> Int -> [Int]
+enumFromTo' x y | (x < y) = x : enumFromTo' (x+1) y
+                | (x == y) = [x]
+                | otherwise = x : enumFromTo' (x-1) y
+
+
+--Exercicio 2
+
+enumFromThenTo' :: Int -> Int -> Int -> [Int]
+enumFromThenTo' x y z | x<y && x>z = []
+                      | x>y && x<z = []
+                      | otherwise = x : enumFromThenTo' y (2*y-x) z
+
+--Exercicio 3
+
+
+plusPlus :: [a] -> [a] -> [a]
+plusPlus [] l = l
+plusPlus l [] = l
+plusPlus (x:y) l = x : plusPlus y l
+
+--Exercicio 4
+
+posicao :: [a] -> Int -> a
+posicao (x:y) 0 = x
+posicao (x:y) z = posicao y (z-1)
+
+--Exercicio 5
+
+reverse' :: [a] -> [a]
+reverse' [] = []
+reverse' (x:y) = (reverse' y) ++ [x]
+
+--Exercicio 6
+
+take' :: Int -> [a] -> [a]
+take' n [] = []
+take' 0 (x:y) = []
+take' n (x:y) = x:(take' (n-1) y)
+
+--Exercicio 7
+
+drop' :: Int -> [a] -> [a]
+drop' n [] = []
+drop' 0 (x:y) = (x:y)
+drop' n (x:y) = drop' (n-1) y 
+
+--Exercicio 8
+
+zip' :: [a] -> [b] -> [(a,b)]
+zip' [] b = []
+zip' a [] = []
+zip' (x:xs) (y:ys) = (x,y) : zip' xs ys
+
+--Exercicio 9
+
+elem1 :: Eq a => a ->  [a] -> Bool
+elem1 n [] = False
+elem1 n (x:xs) = n == x || elem1 n xs
+
+--Exercicio 10
+
+replicate' :: Int -> a -> [a]
+replicate' 0 x = []
+replicate' n x = x : replicate' (n-1) x
+
+--Exercicio 11
+
+intersperse' :: a -> [a] -> [a]
+intersperse' n [] = []
+intersperse' n [a] = [a]
+intersperse' n (x:xs) = x : n : (intersperse' n xs)
+
+--Exercicio 12 ********
+
+group' :: Eq a => [a] -> [[a]]
+group' [] = []
+group' (x:xs) = takeWhile (==x) (x:xs) : group' (dropWhile (==x) (x:xs))
+
+--Exercicio 13
+
+concat' :: [[a]] -> [a]
+concat' [] = []
+concat' (x:xs) = x ++ concat' xs
+
+--Exercicio 14
+
+inits' :: [a] -> [[a]]
+inits' [] = [[]]
+inits' a = inits' (init a) ++ [a]
+
+--Exercicio 15
+
+tails' :: [a] -> [[a]]
+tails' [] = [[]]
+tails' a = [a] ++ tails' (tail a)
+
+--Exercicio 16
+
+isPrefixOf' :: Eq a => [a] -> [a] -> Bool
+isPrefixOf' [] _ = True
+isPrefixOf' _ [] = False
+isPrefixOf' (x:xs) (y:ys) = if x == y then isPrefixOf' xs ys else False
+
+--Exercicio 17
+
+isSuffixOf' :: Eq a => [a] -> [a] -> Bool
+isSuffixOf' [] _ = True
+isSuffixOf' _ [] = False
+isSuffixOf' a b = if isPrefixOf' (reverse a) (reverse b) then True else False
+
+--Exercicio 18
+
+isSubsequenceOf' :: Eq a => [a] -> [a] -> Bool
+isSubsequenceOf' [] [] = True
+isSubsequenceOf' [] _ = True
+isSubsequenceOf' _ [] = False
+isSubsequenceOf' (x:xs) (y:ys) | x == y = isSubsequenceOf' xs ys
+                                        | otherwise = isSubsequenceOf (x:xs) ys
+
+
+--Exercicio 19
+
+elemIndices' :: Eq a => a -> [a] -> [Int]
+elemIndices' _ [] = []
+elemIndices' n l | n == last l = elemIndices' n (init l) ++ [((length l)-1)]
+                 | otherwise = elemIndices' n (init l)
+
+
+--Exercicio 20
+
+nub' :: Eq a => [a] -> [a]
+nub' [] = []
+nub' (x:xs) = if elem x xs then nub' xs else x : nub' xs
+
+--Exercicio 21
+delete' :: Eq a => a -> [a] -> [a]
+delete' _ [] = []
+delete' n (x:xs) = if n == x then xs else x : delete' n xs
+
+--Exercicio 22
+
+doubleBar :: Eq a => [a] -> [a] -> [a]
+doubleBar [] l = []
+doubleBar l [] = l
+doubleBar l (x:xs) = doubleBar (delete' x l) xs
+
+--Exercicio 23
+
+union' :: Eq a => [a] -> [a] -> [a]
+union' l [] = l
+union' [] l = l
+union' (x:xs) (y:ys) = if x == y
+    then x : (union' xs ys)
+    else x : (union xs (y:ys))
+
+--Exercicio 24
+
+intersect' :: Eq a => [a] -> [a] -> [a]
+intersect' [] _ = []
+intersect' _ [] = []
+intersect' (x:xs) l | elem1 x l = x : (intersect' xs l)
+                    | otherwise = intersect' xs l 
+
+--Exercicio 25
+
+insert' :: Ord a => a -> [a] -> [a]
+insert' n [] = [n]
+insert' n (x:xs) = if n > x
+    then x : insert' n xs
+    else (n : x : xs)
+
+--Exercicio 26
+
+unwords' :: [String] -> String
+unwords' [] = ""
+unwords' [x] = x
+unwords' (x:xs) = x ++ " " ++ unwords xs
+
+--Exercicio 27
+
+unlines' :: [String] -> String
+unlines' [] = ""
+unlines' [x] = x
+unlines' (x:xs) = x ++ "\n" ++ unlines' xs ++ "\n"
+
+--Exercicio 28
+
+pMaior :: Ord a => [a] -> Int
+pMaior [x] = 0
+pMaior (x:xs) | x == maximo (x:xs) = 0
+              | otherwise = pMaior xs + 1
+               where 
+                maximo [x] = x
+                maximo (h:i:t) = if h > i
+                    then maximo (h:t)
+                    else maximo (i:t)
+
+
+--Exercicio 29
+
+temRepetidos :: Eq a => [a] -> Bool
+temRepetidos [] = False
+temRepetidos [x] = False
+temRepetidos (x:xs) | elem x xs = True
+                    | otherwise = temRepetidos xs
+
+--Exercicio 30
+
+algarismos :: [Char] -> [Char]
+algarismos [] = []
+algarismos (x:xs) | x>'0' && x<'9' = x : algarismos xs
+                  | otherwise = algarismos xs
+
+
+--Exercicio 31
+
+posImpares :: [a] -> [a]
+posImpares [] = []
+posImpares [x] = []
+posImpares (x:y:xs) = y : posImpares xs
+
+--Exercicio 32:
+
+posPares :: [a] -> [a]
+posPares [] = []
+posPares [x] = [x]
+posPares (x:y:z) = x : posPares z
+
+--Exercicio 33:
+
+isSorted :: Ord a => [a] -> Bool
+isSorted [] = True
+isSorted [x] = True
+isSorted (x:y:z) | x <= y = isSorted (y:z)
+                 | otherwise = False
+
+--Exercicio 34:
+
+isSort :: Ord a => [a] -> [a]
+isSort [] = []
+isSort (x:xs) = insert' x (isSort xs)
+
+--Exercicio 35
+
+menor :: String -> String -> Bool
+menor [] _ = True
+menor _ [] = False
+menor (x:xs) (y:ys) | x < y = True
+                    | x > y = False
+                    | otherwise = menor xs ys
+
+--Exercicio 36
+
+elemMSet :: Eq a => a -> [(a,Int)] -> Bool
+elemMSet _ [] = False
+elemMSet n ((a,b):t) = if n == a
+    then True
+    else elemMSet n t
+
+--Exercicio 37
+
+lengthMSet :: [(a,Int)] -> Int
+lengthMSet [] = 0
+lengthMSet ((a,b):t) = b + lengthMSet t
+
+--Exercicio 38
+
+converteMSet :: [(a,Int)] -> [a]
+converteMSet [] = []
+converteMSet ((a,b):t) = auxReplica b a ++ converteMSet t
+             where auxReplica 0 m = []
+                   auxReplica n m = m : auxReplica (n-1) m
+
+--Exercicio 39
+
+insereMSet :: Eq a => a -> [(a,Int)] -> [(a,Int)]
+insereMSet n [] = [(n,1)]
+insereMSet n ((a,b):t) = if n == a
+    then ((a,b+1):t)
+    else (a,b) : insereMSet n t
+
+--Exercicio 40
+
+removeMSet :: Eq a => a -> [(a,Int)] -> [(a,Int)]
+removeMSet _ [] = []
+removeMSet n ((a,b):t) | n == a && b == 1 = t
+                       | n == a = ((a,b-1):t)
+                       | otherwise = (a,b) : removeMSet n t
+
+--Exercicio 41
+
+constroiMSet :: Ord a => [a] -> [(a,Int)]
+constroiMSet [] = []
+constroiMSet (h:t) = aux h (constroiMSet t)
+                     where aux x [] = [(x,1)]
+                           aux x ((a,b):t)
+                                 | x == a = ((a,b+1):t)
+                                 | x < a = ((x,1):(a,b):t)
+                                 | otherwise = ((a,b) : aux x t)
+
+--Exercicio 42
+
+partitionEithers' :: [Either a b] -> ([a],[b])
+partitionEithers' [] = ([],[])
+partitionEithers' (h:t) = case h of
+                               Left a -> ((a:x),y)
+                               Right b -> (x,(b:y))
+  where (x,y) = partitionEithers t
+
+--Exercicio 43
+
+catMaybes :: [Maybe a] -> [a]
+catMaybes [] = []
+catMaybes ((Just x):xs) = x : catMaybes xs
+catMaybes ((Nothing):xs) = catMaybes xs
+
+
+--Exercicio 44 
+
+data Movimento = Norte | Sul | Este | Oeste deriving Show
+
+posicao' :: (Int,Int) -> [Movimento] -> (Int,Int)
+posicao' (x,y) [] = (x,y)
+posicao' (x,y) (h:t) = case h of
+                Norte -> posicao' (x, y+1) t
+                Sul -> posicao' (x, y-1) t
+                Este -> posicao' (x+1, y) t
+                Oeste -> posicao' (x-1, y) t
+
+
+--Exercicio 45
+
+caminho :: (Int,Int) -> (Int,Int) -> [Movimento]
+caminho (x1,y1) (x2,y2)
+        | x1 < x2 = Este : caminho (x1+1,y1) (x2,y2)
+        | x1 > x2 = Oeste : caminho (x1-1,y1) (x2,y2)
+        | y1 < y2 = Norte : caminho (x1,y1+1) (x2,y2)
+        | y1 > y2 = Sul : caminho (x1,y1-1) (x2,y2)
+        | otherwise = []
+
+
+--Exercicio 46
+
+vertical :: [Movimento] -> Bool
+vertical [] = True
+vertical (x:xs) = case x of
+            Norte -> vertical xs
+            Sul -> vertical xs
+            _ -> False
+
+
+--Exercicio 47
+
+data Posicao = Pos Int Int deriving Show
+
+maisCentral :: [Posicao] -> Posicao
+maisCentral [x] = x
+maisCentral (x:y:z) | aux' x > aux' y = maisCentral (y:z)
+                    | otherwise = maisCentral (x:z)
+
+aux' (Pos x y) = sqrt(fromIntegral(x^2+y^2))
+
+
+vizinhos (Pos x y) ((Pos w z):t) | (x == (w-1)) || (x == (w+1)) || (y == (z-1)) || (y == (z+1)) = (Pos w z) : (vizinhos (Pos x y) t)
+                                 | otherwise = vizinhos (Pos x y) t
+
+
+--Exercicio 48
+
+mesmaOrdenada :: [Posicao] -> Bool
+mesmaOrdenada [] = True
+mesmaOrdenada ((Pos a b) : (Pos c d) : t) | b == d = mesmaOrdenada ((Pos a b) : t)
+                                          | otherwise = False
+
+
+--Exercicio 50
+
+data Semaforo = Verde | Amarelo | Vermelho deriving Show
+
+interseccaoOK :: [Semaforo] -> Bool
+interseccaoOK [] = True
+interseccaoOK l = if (aux1 l) > 1
+    then False
+    else True
+
+aux1 :: [Semaforo] -> Int
+aux1 [] = 0
+aux1 (x:xs) = case x of
+                   Verde -> 1 + (aux1 xs)
+                   Amarelo -> 1 + (aux1 xs)
+                   Vermelho -> (aux1 xs)
+
